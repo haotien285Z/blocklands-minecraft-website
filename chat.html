@@ -54,7 +54,7 @@ footer{background:#0e1711;color:#a4b19f;padding:25px 5%;display:flex;justify-con
 const form=document.getElementById('form'),input=document.getElementById('prompt'),messages=document.getElementById('messages'),send=document.getElementById('send');
 const history=[];
 function addMessage(text,who){const el=document.createElement('div');el.className='msg '+who;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el}
-document.querySelectorAll('.suggestion').forEach(b=>b.addEventListener('click',()=>{input.value=b.textContent;input.focus()}));
+document.querySelectorAll('.suggestion').forEach(b=>b.addEventListener('click',()=>{input.value=b.textContent;form.requestSubmit()}));
 form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text||send.disabled)return;addMessage(text,'user');input.value='';send.disabled=true;send.textContent='Đang trả lời…';const pending=addMessage('Đang suy nghĩ…','bot');history.push({role:'user',content:text});
 try{const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history.slice(-12)})});const data=await response.json();if(!response.ok)throw new Error(data.error||'Không thể kết nối AI lúc này.');const answer=String(data.response||'Mình chưa có câu trả lời cho câu hỏi đó.');pending.textContent=answer;history.push({role:'assistant',content:answer})}
 catch(err){pending.textContent='Xin lỗi, mình chưa kết nối được với AI. '+(err.message||'Hãy thử lại sau.');history.pop()}
